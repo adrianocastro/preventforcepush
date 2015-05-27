@@ -1,3 +1,4 @@
 # preventforcepush
 foobar
 quux
+foo
