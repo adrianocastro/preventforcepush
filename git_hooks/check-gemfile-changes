@@ -1,0 +1,36 @@
+#!/bin/sh
+
+# A post-checkout hook script to verify if the Gemfile has changed after a git checkout.
+# This hook is executed for every git checkout operation (i.e. branch switching, discarding
+# changes in working directory, and git cloning).
+#
+# This hook is called with the following parameters:
+#
+# $1 -- SHA of tip of the branch before checkout
+# $2 -- SHA of tip of the branch post checkout
+#
+# If a change is detected in the Gemfile, a bundle install is automatically executed.
+
+new_sha="$2"
+old_sha="$1"
+
+range="$new_sha..$old_sha"
+
+GEMFILE='Gemfile$'
+
+# check if the Gemfile has changed after checkout
+changed_gemfile=`git diff --name-only $range | grep $GEMFILE`
+
+if [ -n "$changed_gemfile" ]
+then
+  # announce changes detected and prompt user to run bundle install
+  echo
+  read -p "Changes detected to the Gemfile. Would you like to run 'bundle install'? [Yy|Nn] " -n 1 -r < /dev/tty
+
+  if echo $REPLY | grep -E '^[Yy]$' > /dev/null
+  then
+    # run bundle install
+    bundle install
+  fi
+fi
+
