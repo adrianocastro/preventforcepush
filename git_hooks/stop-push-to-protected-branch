@@ -1,10 +1,12 @@
-#!/bin/sh
+#!/bin/bash
 
-PROTECTED_BRANCH='master'
+#PROTECTED_BRANCHES="^(master)"
+
+PROTECTED_BRANCHES="^(master|dev|release-*|patch-*)"
 BRANCH=`git rev-parse --abbrev-ref HEAD`
 PUSH_COMMAND=`ps -ocommand= -p $PPID`
 
-if [ $BRANCH == $PROTECTED_BRANCH ]; then
+if [[ "$BRANCH" =~ $PROTECTED_BRANCHES ]]; then
   echo ""
   echo "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
   echo "X                WARNING                X"
